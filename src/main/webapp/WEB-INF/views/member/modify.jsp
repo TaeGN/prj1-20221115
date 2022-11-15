@@ -35,6 +35,18 @@
 						</label>
 						<input class="form-control-plaintext" type="text" value="${member.id }" readonly>
 					</div>
+					
+					<div class="mb-3">
+						<label for="" class="form-label">
+							닉네임 
+						</label>
+						<div class="input-group">
+							<input id="nickNameInput1" class="form-control" type="text" value="${member.nickName }" name="nickName" data-old-value="${member.nickName }">
+							<button disabled id="nickNameButton1" type="button" class="btn btn-outline-secondary">중복확인</button>
+						</div>
+						<div id="nickNameText1" class="form-text"></div>
+					</div>
+										
 					<div class="mb-3">
 						<label for="" class="form-label">
 							암호 
@@ -76,7 +88,7 @@
 					<input type="hidden" name="id" value="${member.id }">
 					<input type="hidden" name="oldPassword">
 				</form>
-				<input class="btn btn-warning" type="submit" value="수정" data-bs-toggle="modal" data-bs-target="#modifyModal">
+				<input id="submitButton1" class="btn btn-warning" type="submit" value="수정" data-bs-toggle="modal" data-bs-target="#modifyModal">
 				<input class="btn btn-danger" type="submit" value="탈퇴" data-bs-toggle="modal" data-bs-target="#removeModal">
 			</div>
 		</div>
@@ -123,6 +135,65 @@
 <script>
 const ctx = "${pageContext.request.contextPath}";
 
+//닉네임 사용 가능
+let availableNickName = true;
+// 이메일 사용 가능
+let availableEmail = true;
+// 패스워드 사용 가능
+let availablePassword = false;
+
+function enableSubmitButton() {
+	const button = document.querySelector("#submitButton1");
+	if (availableNickName && availableEmail && availablePassword) {
+		button.removeAttribute("disabled")
+	} else {
+		button.setAttribute("disabled", "");
+	}
+}
+
+<%-- 닉네임 중복확인 --%>
+const nickNameInput1 = document.querySelector("#nickNameInput1");
+const nickNameButton1 = document.querySelector("#nickNameButton1");
+const nickNameText1 = document.querySelector("#nickNameText1");
+
+// 닉네임 중복확인 버튼 클릭하면
+nickNameButton1.addEventListener("click", () => {
+	availableNickName = false;
+	const nickName = nickNameInput1.value;
+	fetch(ctx + "/member/existNickName", {
+		method : "post",
+		headers : {
+			"Content-Type" : "application/json"
+		},
+		body : JSON.stringify({nickName})
+	})
+	.then(res => res.json())
+	.then(data => {
+		nickNameText1.innerText = data.message;
+		if(data.status == "not exist") {
+			availableNickName = true;
+			enableSubmitButton();
+		}
+	});
+});
+
+// 닉네임 값 변경
+nickNameInput1.addEventListener("keyup", () => {
+	const oldValue = nickNameInput1.dataset.oldValue;
+	const newValue = nickNameInput1.value;
+	if(oldValue == newValue) {
+		nickNameText1.innerText = "";
+		nickNameButton1.setAttribute("disabled", "");
+	} else {
+		availableNickName = false;
+		enableSubmitButton();
+		nickNameText1.innerText = "닉네임 중복확인을 해주세요.";
+		nickNameButton1.removeAttribute("disabled");
+	}
+	
+});
+
+
 <%-- 이메일 중복확인 --%>
 const emailInput1 = document.querySelector("#emailInput1");
 const emailButton1 = document.querySelector("#emailButton1");
@@ -130,6 +201,7 @@ const emailText1 = document.querySelector("#emailText1");
 
 // 이메일 중복확인 버튼 클릭하면
 emailButton1.addEventListener("click", function() {
+	availableEmail = false;
 	const email = emailInput1.value;
 	
 	fetch(`\${ctx}/member/existEmail`, {
@@ -142,6 +214,10 @@ emailButton1.addEventListener("click", function() {
 		.then(res => res.json())
 		.then(data => {
 			emailText1.innerText = data.message;
+			if(data.status == "not exist") {
+				availableEmail = true;
+				enableSubmitButton();
+			}
 		});
 });
 
@@ -155,6 +231,8 @@ emailInput1.addEventListener("keyup", function() {
 		emailButton1.setAttribute("disabled", "disabled");
 	} else {
 		// 기존 이메일과 다르면 중복체크 요청
+		availableEmail = false;
+		enableSubmitButton();
 		emailText1.innerText = "이메일 중복확인을 해주세요.";
 		emailButton1.removeAttribute("disabled");
 	}
@@ -169,11 +247,14 @@ passwordInput1.addEventListener("keyup", matchPassword);
 passwordInput2.addEventListener("keyup", matchPassword);
 
 function matchPassword() {
+	availablePassword = false;
 	if (passwordInput1.value == passwordInput2.value) {
-		passwordText1.innerText = "패스워드가 일치 합니다.";
+		passwordText1.innerText = "패스워드가 일치합니다.";
+		availablePassword = true;
 	} else {
 		passwordText1.innerText = "패스워드가 일치하지 않습니다.";
 	}
+		enableSubmitButton();
 }
 
 <%-- 탈퇴 모달 확인 버튼 눌렀을 때 --%>

@@ -42,6 +42,22 @@ public class MemberController {
 		return map;
 	}
 	
+	@PostMapping("existNickName")
+	@ResponseBody
+	public Map<String, Object> existNickName(@RequestBody Map<String, String> req) {
+		Map<String, Object> map = new HashMap<>();
+		MemberDto member = service.getByNickName(req.get("nickName"));
+		
+		if(member == null) {
+			map.put("status", "not exist");
+			map.put("message", "사용가능한 닉네임입니다.");
+		} else {
+			map.put("status", "exist");
+			map.put("message", "이미 존재하는 닉네임입니다.");
+		}
+		
+		return map;
+	}
 	
 	@GetMapping("existId/{id}")
 	@ResponseBody

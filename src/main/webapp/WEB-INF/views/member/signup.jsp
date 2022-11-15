@@ -33,6 +33,20 @@
 						<div id="userIdText1" class="form-text">아이디 중복확인을 해주세요.</div>
 						
 					</div>
+					
+					<div class="mb-3">
+						<label for="" class="form-label">
+							닉네임
+						</label>
+						
+						<div class="input-group">
+							<input id="nickNameInput1" class="form-control" type="text" name="nickName">
+							<button id="nickNameExistButton1" class="btn btn-outline-secondary" type="button">중복확인</button>
+						</div>
+						
+						<div id="nickNameText1" class="form-text">닉네임 중복확인을 해주세요.</div>
+						
+					</div>
 
 					<div class="mb-3">
 						<label for="" class="form-label">
@@ -74,6 +88,8 @@
 const ctx = "${pageContext.request.contextPath}";
 // 아이디 사용 가능
 let availableId = false;
+// 닉네임 사용 가능
+let availableNickName = false;
 // 이메일 사용 가능
 let availableEmail = false;
 // 패스워드 사용 가능
@@ -81,7 +97,7 @@ let availablePassword = false;
 
 function enableSubmitButton() {
 	const button = document.querySelector("#submitButton1");
-	if (availableId && availableEmail && availablePassword) {
+	if (availableId && availableNickName && availableEmail && availablePassword) {
 		button.removeAttribute("disabled")
 	} else {
 		button.setAttribute("disabled", "");
@@ -90,12 +106,21 @@ function enableSubmitButton() {
 
 //id input 변경시 submit 버튼 비활성화
 document.querySelector("#userIdInput1").addEventListener("keyup", function() {
+	document.querySelector("#userIdText1").innerText = "아이디 중복확인을 해주세요.";
 	availableId = false;
+	enableSubmitButton();
+});
+
+// nickName input 변경시 submit button 비활성화
+document.querySelector("#nickNameInput1").addEventListener("keyup", function() {
+	document.querySelector("#nickNameText1").innerText = "닉네임 중복확인을 해주세요.";
+	availableNickName = false;
 	enableSubmitButton();
 });
 
 // 이메일 input 변경시 submit 버튼 비활성화
 document.querySelector("#emailInput1").addEventListener("keyup", function() {
+	document.querySelector("#emailText1").innerText = "이메일 중복확인을 해주세요.";
 	availableEmail = false;
 	enableSubmitButton();
 });
@@ -123,6 +148,30 @@ document.querySelector("#emailExistButton1").addEventListener("click", function(
 			}
 		});
 });
+
+// 닉네임 중복확인
+document.querySelector("#nickNameExistButton1").addEventListener("click", () => {
+	availableNickName = false;
+	const nickName = document.querySelector("#nickNameInput1").value;
+	fetch(ctx + "/member/existNickName", {
+		method : "post",
+		headers : {
+			"Content-Type" : "application/json"
+		},
+		body : JSON.stringify({nickName})
+	})
+	.then(res => res.json())
+	.then(data => {
+		document.querySelector("#nickNameText1").innerText = data.message;
+		if(data.status == "not exist") {
+			availableNickName = true;
+			enableSubmitButton();
+		}
+	});
+});
+
+
+
 
 // 아이디 중복확인
 document.querySelector("#userIdExistButton1").addEventListener("click", function() {
