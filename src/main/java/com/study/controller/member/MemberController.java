@@ -3,7 +3,11 @@ package com.study.controller.member;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +27,14 @@ public class MemberController {
 	
 	@Autowired
 	private MemberService service;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@GetMapping("login")
+	public void login() {
+		
+	}
 	
 	@PostMapping("existEmail")
 	@ResponseBody
@@ -114,9 +126,10 @@ public class MemberController {
 		MemberDto oldMember = service.getById(member.getId());
 		
 		rttr.addAttribute("id", member.getId());
-		
-		if(oldPassword.equals(oldMember.getPassword())) {
+		boolean passwordMatch = passwordEncoder.matches(oldPassword, oldMember.getPassword());
+		if(passwordMatch) {
 			int cnt = service.modify(member);
+			
 			if (cnt == 1) {
 				rttr.addFlashAttribute("message", "회원 정보가 수정되었습니다.");
 				return "redirect:/member/info";
@@ -131,19 +144,18 @@ public class MemberController {
 	}
 	
 	@PostMapping("remove")
-	public String remove(String id, String oldPassword, RedirectAttributes rttr) {
+	public String remove(String id, String oldPassword, RedirectAttributes rttr, HttpServletRequest request) throws ServletException {
 		MemberDto oldMember = service.getById(id);
 		
-		if(oldPassword.equals(oldMember.getPassword())) {
-			int cnt = service.remove(id);
+		boolean passwordMatch = passwordEncoder.matches(oldPassword, oldMember.getPassword());
+		
+		if(passwordMatch) {
+			service.remove(id);
+
+			rttr.addFlashAttribute("message", id + "회원 정보가 삭제되었습니다.");
+			request.logout();
 			
-			if(cnt == 1) {
-				rttr.addFlashAttribute("message", id + "회원 정보가 삭제되었습니다.");
-			} else {
-				rttr.addFlashAttribute("message", "회원 정보가 삭제되지 않았습니다.");
-			}
-			
-			return "redirect:/member/list";
+			return "redirect:/board/list";
 		} else {
 			rttr.addAttribute("id", id);
 			rttr.addFlashAttribute("message", "암호가 일치하지 않습니다.");
