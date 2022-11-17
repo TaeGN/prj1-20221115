@@ -70,8 +70,13 @@ public class BoardController {
 			@RequestParam(name = "t", defaultValue = "all") String type,
 			@RequestParam(name = "q", defaultValue = "") String keyword,
 			PageInfo pageInfo,
-			Model model) {
-		List<BoardDto> list = service.listBoard(page, type, keyword, pageInfo);
+			Model model,
+			Authentication authentication) {
+		String username = null;
+		if(authentication != null) {
+			username = authentication.getName();
+		}
+		List<BoardDto> list = service.listBoard(page, type, keyword, pageInfo, username);
 		model.addAttribute("boardList", list);
 	}
 	

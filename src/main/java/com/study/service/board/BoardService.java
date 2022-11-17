@@ -136,7 +136,7 @@ public class BoardService {
 	}
 	
 	
-	public List<BoardDto> listBoard(int page, String type, String keyword, PageInfo pageInfo) {
+	public List<BoardDto> listBoard(int page, String type, String keyword, PageInfo pageInfo, String username) {
 		int records = 10;
 		int offset = (page - 1) * records ;
 		
@@ -167,7 +167,7 @@ public class BoardService {
 		pageInfo.setRightPageNumber(rightPageNumber);
 		pageInfo.setLastPageNumber(lastPageNumber);
 		
-		return boardMapper.list(offset, records, type, "%" + keyword + "%");
+		return boardMapper.list(offset, records, type, "%" + keyword + "%", username);
 	}
 
 	public BoardDto get(int id, String username) {

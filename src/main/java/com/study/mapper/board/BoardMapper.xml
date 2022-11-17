@@ -84,6 +84,7 @@
 		b.title,
 		b.writer,
 		b.inserted,
+		(SELECT COUNT(*) FROM BoardLike WHERE boardId = b.id AND memberId = #{username}) liked,
 		COUNT(DISTINCT r.id) countReply,
         COUNT(DISTINCT f.id) countFile,
         COUNT(DISTINCT l.memberId) countLike
