@@ -7,7 +7,7 @@ import com.study.domain.board.ReplyDto;
 public interface ReplyMapper {
 	 int insert(ReplyDto reply);
 
-	List<ReplyDto> selectReplyByBoardId(int boardId);
+	List<ReplyDto> selectReplyByBoardId(int boardId, String username);
 
 	int deleteById(int id);
 

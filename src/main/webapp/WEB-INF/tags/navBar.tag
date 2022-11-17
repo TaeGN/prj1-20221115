@@ -13,7 +13,7 @@
 
 <%--
 <sec:authorize access="isAuthenticated()">
-	
+	<h1>로그인 됨!</h1>
 </sec:authorize>
 
 <sec:authorize access="not isAuthenticated()">

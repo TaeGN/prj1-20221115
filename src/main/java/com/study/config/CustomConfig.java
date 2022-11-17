@@ -53,7 +53,8 @@ public class CustomConfig {
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.formLogin().loginPage("/member/login");
+		// defaultSuccessUrl 설정 하지 않으면, 로그인 완료 후 직전 요청으로 redirect
+		http.formLogin().loginPage("/member/login").defaultSuccessUrl("/board/list", true);
 		http.logout().logoutUrl("/member/logout");
 		http.csrf().disable();
 		

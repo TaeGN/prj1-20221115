@@ -30,6 +30,7 @@
 					<thead>
 						<tr>
 							<th>#</th>
+							<th>좋아요</th>
 							<th>제목</th>
 							<th>작성자</th>
 							<th>작성일시</th>
@@ -39,6 +40,15 @@
 						<c:forEach items="${boardList}" var="board">
 							<tr>
 								<td>${board.id }</td>
+								
+								<%-- 좋아요 수 출력 --%>
+								<td>
+									<c:if test="${board.countLike > 0 }">
+										<i class="fa-solid fa-thumbs-up"></i>
+										${board.countLike }
+									</c:if>
+								</td>
+								
 								<td>
 									<c:url value="/board/get" var="getLink">
 										<c:param name="id" value="${board.id }"></c:param>
@@ -49,7 +59,7 @@
 									
 									<%-- 댓글 수 출력 --%>
 									<c:if test="${board.countReply > 0 }">
-										<span class="badge rounded-pill text-bg-light">
+										<span class="badge rounded-pill text-bg-info">
 											<i class="fa-regular fa-comment-dots"></i>
 											${board.countReply }
 										</span>
@@ -57,7 +67,7 @@
 									
 									<%-- 파일 수 출력 --%>
 									<c:if test="${board.countFile > 0 }">
-										<span class="badge rounded-pill text-bg-light">
+										<span class="badge rounded-pill text-bg-success">
 											<i class="fa-regular fa-file"></i>
 											${board.countFile }
 										</span>
