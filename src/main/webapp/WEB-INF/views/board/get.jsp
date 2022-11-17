@@ -38,8 +38,18 @@
 						
 					</h1>
 					<h1>
-						<span id="likeButton">
-							<i class="fa-regular fa-thumbs-up"></i>
+						<span
+							
+							<sec:authorize access="not isAuthenticated()">
+								style="pointer-events: none;"
+							</sec:authorize>
+							id="likeButton">
+							<c:if test="${board.liked }">
+								<i class="fa-solid fa-thumbs-up"></i>
+							</c:if>
+							<c:if test="${not board.liked }">
+								<i class="fa-regular fa-thumbs-up"></i>
+							</c:if>
 						</span> 						
 						<span id="likeCount">
 							${board.countLike }

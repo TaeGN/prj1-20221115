@@ -12,7 +12,7 @@ public interface BoardMapper {
 
 	List<BoardDto> list(int offset, int records, String type, String keyword);
 
-	BoardDto select(int id);
+	BoardDto select(int id, String username);
 
 	int delete(int id);
 
@@ -32,5 +32,13 @@ public interface BoardMapper {
 
 	int countLikeByBoardId(String boardId);
 
+	default BoardDto select(int id) {
+		return select(id, null);
+	}
 
+	int deleteLikeByBoardId(int boardId);
+
+	int deleteLikeByMemberId(String memberId);
+
+	List<BoardDto> selectByMemberId(String writer);
 }

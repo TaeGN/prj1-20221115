@@ -170,8 +170,8 @@ public class BoardService {
 		return boardMapper.list(offset, records, type, "%" + keyword + "%");
 	}
 
-	public BoardDto get(int id) {
-		return boardMapper.select(id);
+	public BoardDto get(int id, String username) {
+		return boardMapper.select(id, username);
 	}
 	
 	public int remove(int id) {
@@ -184,6 +184,8 @@ public class BoardService {
 				deleteFile(id, fileName);
 			}
 		}
+		// 좋아요 지우기
+		boardMapper.deleteLikeByBoardId(id);
 		
 		// db 파일 records 지우기
 		boardMapper.deleteFileByBoardId(id);
@@ -230,6 +232,10 @@ public class BoardService {
 		
 		return map;
 	}
-	
+
+	public BoardDto get(int id) {
+		// TODO Auto-generated method stub
+		return get(id, null);
+	}
 
 }

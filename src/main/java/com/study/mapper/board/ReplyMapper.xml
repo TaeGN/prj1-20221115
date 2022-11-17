@@ -5,6 +5,11 @@
   
 <mapper namespace="com.study.mapper.board.ReplyMapper">
 
+	<delete id="deleteReplyByMemberId">
+	DELETE FROM Reply
+	WHERE writer = #{writer}	
+	</delete>
+
 	<delete id="deleteByBoardId">
 	DELETE FROM Reply
 	WHERE boardId = #{id}

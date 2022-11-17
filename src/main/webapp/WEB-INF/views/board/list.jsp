@@ -43,10 +43,10 @@
 								
 								<%-- 좋아요 수 출력 --%>
 								<td>
-									<c:if test="${board.countLike > 0 }">
+									<%-- <c:if test="${board.countLike > 0 }"> --%>
 										<i class="fa-solid fa-thumbs-up"></i>
 										${board.countLike }
-									</c:if>
+									<%-- </c:if> --%>
 								</td>
 								
 								<td>

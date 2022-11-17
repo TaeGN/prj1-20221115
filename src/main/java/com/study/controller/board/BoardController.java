@@ -76,8 +76,15 @@ public class BoardController {
 	}
 	
 	@GetMapping("get")
-	public void get(int id, Model model) {
-		BoardDto board = service.get(id);
+	public void get(int id, Model model, Authentication authentication) {
+		
+		String username = null;
+		
+		if(authentication != null) {
+			username = authentication.getName();
+		}
+		
+		BoardDto board = service.get(id, username);
 		
 		model.addAttribute("board", board);
 	}
