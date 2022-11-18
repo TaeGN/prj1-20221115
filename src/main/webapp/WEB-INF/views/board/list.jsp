@@ -49,6 +49,7 @@
 									<c:if test="${not board.liked}">
 										<i class="fa-regular fa-thumbs-up"></i>
 									</c:if>
+									${board.countLike }
 								</td>
 								
 								<td>
